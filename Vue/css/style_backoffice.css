@@ -1,0 +1,16 @@
+body {
+	
+	background-color:#f2f2fc;
+	font-family:arial;
+	color:#504e70;
+}
+
+#menu{ width:100%;text-align:center;font-size:1.5em;}
+#menu H1{color:#302e4d;}
+#menu HR{color:#504e70;}
+ img{	box-shadow: 4px 4px 4px black;border-radius:15px;}
+
+a {text-decoration:none;color:#504e70;}
+
+a:hover {text-decoration:none;color:red;}
+
