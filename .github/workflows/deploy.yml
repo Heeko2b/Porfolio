@@ -1,0 +1,57 @@
+name: Build and Deploy PHP site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # Lance un serveur local sur le dossier contenant ton site
+      - name: Start PHP built-in server
+        run: |
+          php -S localhost:8000 -t vue/ &
+          sleep 5
+
+      # Télécharge le site rendu sous forme de HTML statique
+      - name: Generate static version
+        run: |
+          mkdir static
+          wget -r -np -E -k -p -P static http://localhost:8000
+
+      # Upload l’artifact (le site statique)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'static/localhost:8000'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
